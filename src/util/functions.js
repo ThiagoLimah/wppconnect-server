@@ -89,7 +89,12 @@ export async function callWebHook(client, req, event, data) {
       const chatId = data.from || data.chatId || (data.chatId ? data.chatId._serialized : null);
       data = Object.assign({ event: event, session: client.session }, data);
       if (req.serverOptions.mapper.enable) data = await convert(req.serverOptions.mapper.prefix, data);
-      api
+      const apiConfig = {
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      };
+      var instance = api.create(apiConfig);
+      instance
         .post(webhook, data)
         .then(() => {
           try {
